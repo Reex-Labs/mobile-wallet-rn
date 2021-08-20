@@ -1,15 +1,52 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import HistoryTransactions from '../components/HistoryTransactions';
+import { Text, View, Button } from '../components/Themed';
+import { logout } from '../utils/auth';
+import AuthContext from '../hooks/authContext';
 
-export default function TabOneScreen() {
+export default function TabOneScreen({ navigation }: { navigation: any }) {
+  const { setAuth, setWallet, balance } = React.useContext(AuthContext);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <HeaderButton />,
+    });
+  }, [navigation]);
+
+  const HeaderButton = () => {
+    return (
+      <View style={{ marginRight: 8, marginTop: 2 }}>
+        <Button onPress={onHeaderButtor} title="Выйти" />
+      </View>
+    );
+  }
+
+  const onHeaderButtor = () => {
+    logout()
+    setAuth(false)
+    setWallet(false)
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <View style={styles.balance}>
+        <Text style={styles.title}>{balance}</Text>
+        <Text style={styles.title2}>REEX</Text>
+
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.button}
+            title={"Отправить"}
+            onPress={() => navigation.navigate("TabTwo")}
+          />
+          <View style={styles.divider} />
+          <Button style={styles.button} title={"Получить"} />
+        </View>
+      </View>
+
+      <HistoryTransactions style={styles.history} />
     </View>
   );
 }
@@ -17,16 +54,39 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  balance: {
+    height: 200,
+    textAlign: "center",
+    backgroundColor: "#0063c0",
+    // padding: "10%",
+    paddingTop: "12%",
+  },
+  history: {
+    flex: 1,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "white",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  title2: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 24,
+    backgroundColor: "transparent",
+  },
+  button: {},
+  divider: {
+    marginHorizontal: 10,
   },
 });

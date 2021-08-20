@@ -10,6 +10,9 @@ export default {
   prefixes: [Linking.makeUrl('/')],
   config: {
     screens: {
+      Welcome: 'welcome',
+      Login: 'login',
+      Import: 'import',
       Root: {
         screens: {
           TabOne: {
@@ -20,6 +23,16 @@ export default {
           TabTwo: {
             screens: {
               TabTwoScreen: 'two',
+            },
+          },
+          TabThree: {
+            screens: {
+              TabOneScreen: 'three',
+            },
+          },
+          TabFour: {
+            screens: {
+              TabTwoScreen: 'four',
             },
           },
         },
