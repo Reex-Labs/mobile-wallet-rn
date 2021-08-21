@@ -19,6 +19,7 @@ export default function App() {
   const [isAuth, setAuth] = React.useState(false);
   const [isWallet, setWallet] = React.useState(false);
   const [address, setAddress] = React.useState("");
+  const [mnemonic, setMnemonic] = React.useState("");
   const [balance, setBalance] = React.useState("0");
 
   useBalance(address, setBalance)
@@ -26,7 +27,8 @@ export default function App() {
   checkWallet().then(async (result: boolean) => {
     setWallet(result);
     const wallet = await getWallet()
-    setAddress(wallet.address ?? '');
+    setAddress(wallet.address ?? "");
+    setMnemonic(wallet.mnemomic ?? "");
   });
 
   if (!isLoadingComplete) {
@@ -38,7 +40,9 @@ export default function App() {
           setAuth,
           setWallet,
           setAddress,
+          setMnemonic,
           address,
+          mnemonic,
           isAuth,
           isWallet,
           balance,

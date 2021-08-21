@@ -103,17 +103,6 @@ export class Cosmolib {
     }
   }
 
-  async sendToken(from: string, to: string, amount: string, mnemonic: string) {
-    const data = await this.getAccounts(from);
-    const privKey = await this.getECPairPriv(mnemonic);
-    const pubKeyAny = this.getPubKeyAny(privKey);
-    const txBody = this.getTxBody(from, to, amount);
-    const authInfo = await this.getAuthInfo(from, amount, pubKeyAny, data);
-    const signedTx = this.sign(txBody, authInfo, data.account.account_number, privKey);
-    const result = await this.broadcast(signedTx);
-    console.log("result: ", result);
-  }
-
   getTxBody(from: string, to: string, amount: string) {
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: from,
@@ -135,10 +124,8 @@ export class Cosmolib {
   }
 
   async getAuthInfo(
-    address: string,
     amount: string,
     pubKeyAny: string,
-    data: any
   ) {
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
       public_key: pubKeyAny,
@@ -147,7 +134,7 @@ export class Cosmolib {
           mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
         },
       },
-      sequence: data.account.sequence, //getAccounts(address)
+      sequence: "42", //getAccounts(address) - data => data.account.sequence
     });
 
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
@@ -163,9 +150,7 @@ export class Cosmolib {
     return authInfo;
   }
 
-  sign(txBody, authInfo, accountNumber, privKey) {
-    global.crypto.createHash = createHash;
-
+  sign(txBody: any, authInfo: any, accountNumber: any, privKey: ArrayBuffer | { valueOf(): ArrayBuffer | SharedArrayBuffer; } | undefined) {
     const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
     const authInfoBytes =
       message.cosmos.tx.v1beta1.AuthInfo.encode(authInfo).finish();
@@ -185,45 +170,66 @@ export class Cosmolib {
       signatures: [sig.signature],
     });
     const txBytes = message.cosmos.tx.v1beta1.TxRaw.encode(txRaw).finish();
-    const txBytesBase64 = Buffer.from(txBytes, "binary").toString("base64");
     return txBytes;
   }
 
-  // "BROADCAST_MODE_UNSPECIFIED", "BROADCAST_MODE_BLOCK", "BROADCAST_MODE_SYNC", "BROADCAST_MODE_ASYNC"
-  async broadcast(signedTxBytes, broadCastMode = "BROADCAST_MODE_SYNC") {
-    const txBytesBase64 = Buffer.from(signedTxBytes, "binary").toString(
-      "base64"
+  async sendToken(from: string, to: string, amount: string, mnemonic: string) {
+    // const data = await this.getAccounts(from);
+    // console.log(data)
+    const privKey = await this.getECPairPriv(mnemonic);
+    const pubKeyAny = this.getPubKeyAny(privKey);
+    const txBody = this.getTxBody(from, to, amount);
+    const authInfo = await this.getAuthInfo(amount, pubKeyAny);
+    const signedTx = this.sign(
+      txBody,
+      authInfo,
+      '1', // data.account.account_number
+      privKey
     );
 
-    const test = Buffer.from(signedTxBytes).toJSON();
+    const responce = await this.broadcast(signedTx, "BROADCAST_MODE_BLOCK");
+    return this.assertTransaction(responce);
+  }
 
-    console.log(test);
+  // "BROADCAST_MODE_UNSPECIFIED", "BROADCAST_MODE_BLOCK", "BROADCAST_MODE_SYNC", "BROADCAST_MODE_ASYNC"
+  async broadcast(signedTxBytes: WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }, broadCastMode = "BROADCAST_MODE_SYNC") {
+    const txBytesBase64 = Buffer.from(signedTxBytes, "binary").toString("base64");
 
     var options = {
       method: "POST",
-      url: this.url + "/cosmos/tx/v1beta1/txs",
-      headers: { "Content-Type": "application/json" },
+      // headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tx_bytes: txBytesBase64, mode: broadCastMode }),
-      json: true,
+      // json: true,
     };
 
     try {
-      let response = await fetch("http://185.20.225.82:26657/broadcast_tx_sync?tx=" + '' + test);
-      console.log(await response.json());
+      let response = await fetch(this.url + "/cosmos/tx/v1beta1/txs", options);
+      return await response.json()
     } catch (e) {
       console.log(e);
     }
+  }
 
-    // return new Promise(function (resolve, reject) {
-    //   request(options, function (error, response, body) {
-    //     if (error) return reject(error);
-    //     try {
-    //       resolve(body);
-    //     } catch (e) {
-    //       reject(e);
-    //     }
-    //   });
-    // });
+  assertTransaction(transactionResult: any) {
+    const transactionInfo = {
+      status: false,
+      code: '',
+      log: ''
+    }
+    if (!transactionResult) {
+      return transactionInfo;
+    }
+
+    transactionInfo.code = transactionResult.tx_response.code;
+
+    if (transactionInfo.code === '0') {
+      transactionInfo.status = true
+    }
+    else {
+      transactionInfo.log = transactionResult.tx_response.raw_log
+    }
+    
+    return transactionInfo;
   }
 }
 

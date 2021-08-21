@@ -42,9 +42,11 @@ export type TabFiveParamList = {
 export interface TAuthContext {
   setAuth: (value: boolean) => void;
   setWallet: (value: boolean) => void;
-  setAddress: (address: string) => void
+  setAddress: (address: string) => void;
+  setMnemonic: (address: string) => void;
   address: string;
+  mnemonic: string;
   isAuth: boolean;
   isWallet: boolean;
-  balance: string
+  balance: string;
 }

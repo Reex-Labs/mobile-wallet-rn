@@ -11,6 +11,8 @@ import AuthContext from "../hooks/authContext";
 import { Text, View, Button } from "../components/Themed";
 import { isValidAddress } from "../utils/address";
 import cosmolib from "../utils/cosmolib";
+import { reexToCoin } from "../utils/reex";
+import { Alert } from "react-native";
 
 export default function TabTwoScreen() {
   const [to, setAddress] = React.useState("");
@@ -22,7 +24,7 @@ export default function TabTwoScreen() {
   const [scanning, setScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
 
-  const { address } = useContext(AuthContext)
+  const { address, mnemonic } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -63,13 +65,19 @@ export default function TabTwoScreen() {
     return <Text>No access to camera</Text>;
   }
 
-  function transfer() {
-    cosmolib.sendToken(
-      "reex1rqej9g9dxpyhn4ec4yekpcacpzn283ewm6qtl8",
-      "reex18kfmh4ky3w6vwfxe8qlgtfpalkx2azawep75fs",
-      "1000000",
-      "forward very salmon inner category caught crew wine depart eye siege arm curious gaze joke resist purchase trim loud saddle hurt eagle cabbage proof"
-    );
+  async function transfer() {
+    const result = await cosmolib.sendToken(address, to, reexToCoin(amount).amount, mnemonic);
+    if (result) {
+      if (result.status) {
+        Alert.alert('Перевод выполнен!')
+      }
+      else {
+        Alert.alert('Ошибка', result.log);
+      }
+    }
+    else {
+      Alert.alert('Ошибка', 'Неизвестная ошибка. Возможно проблемы с интернетом.')
+    }
   }
 
   const Scaner = () => (
@@ -144,10 +152,7 @@ export default function TabTwoScreen() {
             disabled={!(to && amount)}
             onPress={transfer}
           />
-          <Button
-            title={"тест"}
-            onPress={transfer}
-          />
+          <Button title={"тест"} onPress={transfer} />
         </View>
       </View>
     );
