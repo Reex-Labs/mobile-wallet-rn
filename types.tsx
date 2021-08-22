@@ -1,6 +1,7 @@
 /**
  * Learn more about using TypeScript with React Navigation:
  * https://reactnavigation.org/docs/typescript/
+ * 
  */
 
 export type RootStackParamList = {
@@ -8,31 +9,32 @@ export type RootStackParamList = {
   NotFound: undefined;
   Welcome: undefined;
   Login: undefined;
-  Import: undefined
+  Import: undefined;
+  MnemonicInfo: undefined;
 };
 
 export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
-  TabThree: undefined;
-  TabFour: undefined;
+  Wallet: undefined;
+  Send: undefined;
+  Receive: undefined;
+  Staking: undefined;
   TabFive: undefined;
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+export type TabWalletParamList = {
+  TabWalletScreen: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type TabSendParamList = {
+  TabSendScreen: undefined;
 };
 
-export type TabThreeParamList = {
-  TabThreeScreen: undefined;
+export type TabReceiveParamList = {
+  TabReceiveScreen: undefined;
 };
 
-export type TabFourParamList = {
-  TabFourScreen: undefined;
+export type TabStakingParamList = {
+  TabStakingScreen: undefined;
 };
 
 export type TabFiveParamList = {
@@ -44,9 +46,12 @@ export interface TAuthContext {
   setWallet: (value: boolean) => void;
   setAddress: (address: string) => void;
   setMnemonic: (address: string) => void;
+  setLoading: (state: boolean) => void;
   address: string;
   mnemonic: string;
   isAuth: boolean;
   isWallet: boolean;
   balance: string;
+  loading: boolean;
+  balanceLoaded: boolean;
 }

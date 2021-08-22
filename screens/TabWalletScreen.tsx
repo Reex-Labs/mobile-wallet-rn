@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 
 import HistoryTransactions from '../components/HistoryTransactions';
 import { Text, View, Button } from '../components/Themed';
 import { logout } from '../utils/auth';
 import AuthContext from '../hooks/authContext';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function TabOneScreen({ navigation }: { navigation: any }) {
-  const { setAuth, setWallet, balance } = React.useContext(AuthContext);
+export default function TabWalletScreen({ navigation }: { navigation: any }) {
+  const { setAuth, setWallet, balance, balanceLoaded } =
+    React.useContext(AuthContext);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -18,31 +20,38 @@ export default function TabOneScreen({ navigation }: { navigation: any }) {
   const HeaderButton = () => {
     return (
       <View style={{ marginRight: 8, marginTop: 2 }}>
-        <Button onPress={onHeaderButtor} title="Выйти" />
+        <TouchableOpacity onPress={onHeaderButtor}>
+          <Ionicons name="settings-outline" size={32} color="#777" />
+        </TouchableOpacity>
       </View>
     );
-  }
+  };
 
   const onHeaderButtor = () => {
-    logout()
-    setAuth(false)
-    setWallet(false)
-  }
+    logout();
+    setAuth(false);
+    setWallet(false);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.balance}>
         <Text style={styles.title}>{balance}</Text>
         <Text style={styles.title2}>REEX</Text>
+        <ActivityIndicator animating={!balanceLoaded} color="#fff" />
 
         <View style={styles.buttonContainer}>
           <Button
             style={styles.button}
             title={"Отправить"}
-            onPress={() => navigation.navigate("TabTwo")}
+            onPress={() => navigation.navigate("Send")}
           />
           <View style={styles.divider} />
-          <Button style={styles.button} title={"Получить"} />
+          <Button
+            style={styles.button}
+            title={"Получить"}
+            onPress={() => navigation.navigate("Receive")}
+          />
         </View>
       </View>
 
@@ -56,11 +65,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   balance: {
-    height: 200,
+    height: 220,
     textAlign: "center",
     backgroundColor: "#0063c0",
-    // padding: "10%",
-    paddingTop: "12%",
+    paddingTop: 40,
   },
   history: {
     flex: 1,
@@ -82,7 +90,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 24,
+    marginTop: 14,
     backgroundColor: "transparent",
   },
   button: {},

@@ -7,37 +7,38 @@
 import * as Linking from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: [Linking.makeUrl("/")],
   config: {
     screens: {
-      Welcome: 'welcome',
-      Login: 'login',
-      Import: 'import',
+      Welcome: "Welcome",
+      Login: "Login",
+      Import: "Import",
+      MnemonicInfo: "MnemonicInfo",
       Root: {
         screens: {
-          TabOne: {
+          Wallet: {
             screens: {
-              TabOneScreen: 'one',
+              TabWalletScreen: "Wallet",
             },
           },
-          TabTwo: {
+          Send: {
             screens: {
-              TabTwoScreen: 'two',
+              TabSendScreen: "Send",
             },
           },
-          TabThree: {
+          Receive: {
             screens: {
-              TabOneScreen: 'three',
+              TabReceiveScreen: "Receive",
             },
           },
-          TabFour: {
+          Staking: {
             screens: {
-              TabTwoScreen: 'four',
+              TabStakingScreen: "Staking",
             },
           },
         },
       },
-      NotFound: '*',
+      NotFound: "*",
     },
   },
 };

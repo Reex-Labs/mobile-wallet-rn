@@ -1,76 +1,75 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { newAuth } from "../utils/auth";
 import { genAddressReex } from "../utils/address";
 import AuthContext from "../hooks/authContext";
+import { saveWalletToStore } from "../utils/auth";
 
 export default function WelcomeScreen({ navigation }: { navigation: any }) {
-  const { setWallet, setAddress, address } = React.useContext(AuthContext);
-  const [mnemonicState, setMnemonic] = React.useState("");
+  const { setWallet, setLoading, loading } = React.useContext(AuthContext);
 
   async function createWallet() {
-    const { address, mnemonic } = await genAddressReex();
-
-    await newAuth(address, mnemonic);
-    setAddress(address);
-    setMnemonic(mnemonic);
+    setLoading(true);
+    setTimeout(async () => {
+      const { address, mnemonic } = await genAddressReex();
+      saveWalletToStore(address, mnemonic);
+      setWallet(true)
+      navigation.navigate("MnemonicInfo", { mnemonic });
+      setLoading(false);
+    }, 0);
   }
-
-  const onForwardButton = () => {
-    setWallet(true);
-  };
 
   const onImportButton = () => {
     navigation.navigate("Import");
   };
 
-  const ForwardButton = () => {
-    if (address && mnemonicState) {
-      return (
-        <View style={{ marginTop: 20 }}>
-          <Button title={"Далее"} onPress={onForwardButton} />
-        </View>
-      );
-    }
-    return <Text></Text>;
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Добро пожаловать в REEX</Text>
-      {address && mnemonicState ? (
-        <>
-          <Text style={styles.warning}>
-            Важно! Это сид-фраза - резервная фраза для вашего кошелька. Очень
-            важно, что бы вы сохранили её в защищенное место. С помощью этой
-            фразы вы сможете получить доступ к своему кошельку.
-          </Text>
-          <Text style={styles.title} selectable={true}>
-            {mnemonicState}
-          </Text>
-          <ForwardButton />
-        </>
-      ) : (
-        <>
-          <View style={styles.block}>
-            <Text style={styles.text}>
-              Если у вас еще нет кошелька REEX, то создайте его!
-            </Text>
-            <View style={{ width: 200, alignSelf: "center" }}>
-              <Button title={"Создать кошелек"} onPress={createWallet} />
-            </View>
-          </View>
-
-          <Text style={styles.title}>или</Text>
-          <View style={styles.block}>
-            <Text style={styles.text}>импортируейте существующий</Text>
-            <View style={{ width: 200, alignSelf: "center" }}>
-              <Button title={"Импорт"} onPress={onImportButton} />
-            </View>
-          </View>
-        </>
-      )}
+      <CreateWalletMain
+        onCreateButton={createWallet}
+        onImportButton={onImportButton}
+        loading={loading}
+      />
     </View>
+  );
+}
+
+function CreateWalletMain({
+  onCreateButton,
+  onImportButton,
+  loading,
+}: {
+  onCreateButton: () => void;
+  onImportButton: () => void;
+  loading: boolean;
+}) {
+  return (
+    <>
+      <View style={styles.block}>
+        <Text style={styles.text}>
+          Если у вас еще нет кошелька REEX, то создайте его!
+        </Text>
+        <View style={{ width: 200, alignSelf: "center" }}>
+          <Button
+            title={"Создать кошелек"}
+            onPress={onCreateButton}
+            disabled={loading}
+          />
+        </View>
+      </View>
+
+      <Text style={styles.title}>или</Text>
+      <View style={styles.block}>
+        <Text style={styles.text}>импортируейте существующий</Text>
+        <View style={{ width: 200, alignSelf: "center" }}>
+          <Button
+            title={"Импорт"}
+            onPress={onImportButton}
+            disabled={loading}
+          />
+        </View>
+      </View>
+    </>
   );
 }
 
@@ -96,7 +95,12 @@ const styles = StyleSheet.create({
   warning: {
     color: "#990000",
     marginVertical: 20,
-    textAlign: "center"
+    textAlign: "center",
+  },
+  border: {
+    padding: 10,
+    borderColor: "#aaa",
+    borderWidth: 1,
   },
   block: {
     marginVertical: 20,

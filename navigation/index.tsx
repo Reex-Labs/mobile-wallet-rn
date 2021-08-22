@@ -14,6 +14,7 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import LoginScreen from "../screens/LoginScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ImportWalletScreen from "../screens/ImportWalletScreen";
+import MnemonicInfoScreen from "../screens/MnemonicInfoScreen";
 
 import AuthContext from "../hooks/authContext";
 
@@ -37,7 +38,7 @@ export default function Navigation({
 const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const { isWallet, setWallet, isAuth } = useContext(AuthContext);
+  const { isWallet, isAuth } = useContext(AuthContext);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -60,6 +61,7 @@ function RootNavigator() {
         <>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Import" component={ImportWalletScreen} />
+          <Stack.Screen name="MnemonicInfo" component={MnemonicInfoScreen} />
         </>
       )}
     </Stack.Navigator>

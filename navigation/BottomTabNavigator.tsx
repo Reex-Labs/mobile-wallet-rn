@@ -10,16 +10,16 @@ import * as React from "react";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import TabOneScreen from "../screens/TabOneScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
-import TabThreeScreen from "../screens/TabThreeScreen";
-import TabFourScreen from "../screens/TabFourScreen";
+import TabWalletScreen from "../screens/TabWalletScreen";
+import TabSendScreen from "../screens/TabSendScreen";
+import TabReceiveScreen from "../screens/TabReceiveScreen";
+import TabStakingScreen from "../screens/TabStakingScreen";
 import {
   BottomTabParamList,
-  TabOneParamList,
-  TabTwoParamList,
-  TabThreeParamList,
-  TabFourParamList,
+  TabWalletParamList,
+  TabSendParamList,
+  TabReceiveParamList,
+  TabStakingParamList,
   TabFiveParamList,
 } from "../types";
 
@@ -30,43 +30,41 @@ export default function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Wallet"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
     >
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneNavigator}
+        name="Wallet"
+        component={TabWalletNavigator}
         options={{
+          title: "Баланс",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="ios-wallet" color={color} />
           ),
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoNavigator}
+        name="Send"
+        component={TabSendNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
-          ),
+          title: "Отправить",
+          tabBarIcon: ({ color }) => <TabBarIcon name="exit" color={color} />,
         }}
       />
       <BottomTab.Screen
-        name="TabThree"
-        component={TabThreeNavigator}
+        name="Receive"
+        component={TabReceiveNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
-          ),
+          title: "Получить",
+          tabBarIcon: ({ color }) => <TabBarIcon name="enter" color={color} />,
         }}
       />
       <BottomTab.Screen
-        name="TabFour"
-        component={TabFourNavigator}
+        name="Staking"
+        component={TabStakingNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="ios-code" color={color} />
-          ),
+          title: "Стейкинг",
+          tabBarIcon: ({ color }) => <TabBarIcon name="rocket" color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -84,72 +82,72 @@ function TabBarIcon(props: {
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+const TabWalletStack = createStackNavigator<TabWalletParamList>();
 
-function TabOneNavigator() {
+function TabWalletNavigator() {
   return (
-    <TabOneStack.Navigator>
-      <TabOneStack.Screen
-        name="TabOneScreen"
-        component={TabOneScreen}
+    <TabWalletStack.Navigator>
+      <TabWalletStack.Screen
+        name="TabWalletScreen"
+        component={TabWalletScreen}
         options={{ headerTitle: "БАЛАНС" }}
       />
-    </TabOneStack.Navigator>
+    </TabWalletStack.Navigator>
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const TabSendStack = createStackNavigator<TabSendParamList>();
 
-function TabTwoNavigator() {
+function TabSendNavigator() {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
-        name="TabTwoScreen"
-        component={TabTwoScreen}
+    <TabSendStack.Navigator>
+      <TabSendStack.Screen
+        name="TabSendScreen"
+        component={TabSendScreen}
         options={{ headerTitle: "ОТПРАВИТЬ" }}
       />
-    </TabTwoStack.Navigator>
+    </TabSendStack.Navigator>
   );
 }
 
-const TabThreeStack = createStackNavigator<TabThreeParamList>();
+const TabReceiveStack = createStackNavigator<TabReceiveParamList>();
 
-function TabThreeNavigator() {
+function TabReceiveNavigator() {
   return (
-    <TabThreeStack.Navigator>
-      <TabThreeStack.Screen
-        name="TabThreeScreen"
-        component={TabThreeScreen}
+    <TabReceiveStack.Navigator>
+      <TabReceiveStack.Screen
+        name="TabReceiveScreen"
+        component={TabReceiveScreen}
         options={{ headerTitle: "ПОЛУЧИТЬ" }}
       />
-    </TabThreeStack.Navigator>
+    </TabReceiveStack.Navigator>
   );
 }
 
-const TabFourStack = createStackNavigator<TabFourParamList>();
+const TabStakingStack = createStackNavigator<TabStakingParamList>();
 
-function TabFourNavigator() {
+function TabStakingNavigator() {
   return (
-    <TabFourStack.Navigator>
-      <TabFourStack.Screen
-        name="TabFourScreen"
-        component={TabFourScreen}
+    <TabStakingStack.Navigator>
+      <TabStakingStack.Screen
+        name="TabStakingScreen"
+        component={TabStakingScreen}
         options={{ headerTitle: "СТЕЙКИНГ" }}
       />
-    </TabFourStack.Navigator>
+    </TabStakingStack.Navigator>
   );
 }
 
-const TabFiveStack = createStackNavigator<TabFiveParamList>();
+// const TabFiveStack = createStackNavigator<TabFiveParamList>();
 
-function TabFiveNavigator() {
-  return (
-    <TabFiveStack.Navigator>
-      <TabFiveStack.Screen
-        name="TabFiveScreen"
-        component={TabTwoScreen}
-        options={{ headerTitle: "ОБРАЩЕНИЯ" }}
-      />
-    </TabFiveStack.Navigator>
-  );
-}
+// function TabFiveNavigator() {
+//   return (
+//     <TabFiveStack.Navigator>
+//       <TabFiveStack.Screen
+//         name="TabFiveScreen"
+//         component={TabFiveScreen}
+//         options={{ headerTitle: "ОБРАЩЕНИЯ" }}
+//       />
+//     </TabFiveStack.Navigator>
+//   );
+// }

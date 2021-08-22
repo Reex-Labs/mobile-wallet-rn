@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile-wallet",
-    "slug": "mobile-wallet",
+    "name": "reexwallet",
+    "slug": "reexwallet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

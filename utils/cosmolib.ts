@@ -75,9 +75,9 @@ export class Cosmolib {
 
   getPubKeyAny(privKey: string) {
     const pubKeyByte = secp256k1.publicKeyCreate(privKey);
-    var buf1 = new Buffer.from([10]);
-    var buf2 = new Buffer.from([pubKeyByte.length]);
-    var buf3 = new Buffer.from(pubKeyByte);
+    var buf1 = Buffer.from([10]);
+    var buf2 = Buffer.from([pubKeyByte.length]);
+    var buf3 = Buffer.from(pubKeyByte);
     const pubKey = Buffer.concat([buf1, buf2, buf3]);
     const pubKeyAny = new message.google.protobuf.Any({
       type_url: "/cosmos.crypto.secp256k1.PubKey",
@@ -123,10 +123,11 @@ export class Cosmolib {
     return txBody;
   }
 
-  async getAuthInfo(
-    amount: string,
-    pubKeyAny: string,
-  ) {
+  async getAuthInfo(amount: string, pubKeyAny: string, data: any) {
+    let sequence = "0";
+    if (data && data.account.sequence) {
+      sequence = data.account.sequence;
+    }
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
       public_key: pubKeyAny,
       mode_info: {
@@ -134,7 +135,7 @@ export class Cosmolib {
           mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
         },
       },
-      sequence: "42", //getAccounts(address) - data => data.account.sequence
+      sequence: sequence, //getAccounts(address) - data => data.account.sequence
     });
 
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
@@ -150,7 +151,14 @@ export class Cosmolib {
     return authInfo;
   }
 
-  sign(txBody: any, authInfo: any, accountNumber: any, privKey: ArrayBuffer | { valueOf(): ArrayBuffer | SharedArrayBuffer; } | undefined) {
+  sign(
+    txBody: any,
+    authInfo: any,
+    accountNumber: any,
+    privKey:
+      | ArrayBuffer
+      | { valueOf(): ArrayBuffer | SharedArrayBuffer }
+  ) {
     const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
     const authInfoBytes =
       message.cosmos.tx.v1beta1.AuthInfo.encode(authInfo).finish();
@@ -174,26 +182,35 @@ export class Cosmolib {
   }
 
   async sendToken(from: string, to: string, amount: string, mnemonic: string) {
-    // const data = await this.getAccounts(from);
-    // console.log(data)
+    let accountNumber = "0";
+    const data = await this.getAccounts(from);
+    if (data && data.account.account_number) {
+      accountNumber = data.account.account_number;
+    }
+    if (data && data.code === 5) {
+      console.log("[tx] account key not found");
+      accountNumber = data.account.account_number;
+    }
     const privKey = await this.getECPairPriv(mnemonic);
     const pubKeyAny = this.getPubKeyAny(privKey);
     const txBody = this.getTxBody(from, to, amount);
-    const authInfo = await this.getAuthInfo(amount, pubKeyAny);
-    const signedTx = this.sign(
-      txBody,
-      authInfo,
-      '1', // data.account.account_number
-      privKey
-    );
+    const authInfo = await this.getAuthInfo(amount, pubKeyAny, data);
+    const signedTx = this.sign(txBody, authInfo, accountNumber, privKey);
 
     const responce = await this.broadcast(signedTx, "BROADCAST_MODE_BLOCK");
     return this.assertTransaction(responce);
   }
 
   // "BROADCAST_MODE_UNSPECIFIED", "BROADCAST_MODE_BLOCK", "BROADCAST_MODE_SYNC", "BROADCAST_MODE_ASYNC"
-  async broadcast(signedTxBytes: WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }, broadCastMode = "BROADCAST_MODE_SYNC") {
-    const txBytesBase64 = Buffer.from(signedTxBytes, "binary").toString("base64");
+  async broadcast(
+    signedTxBytes:
+      | WithImplicitCoercion<string>
+      | { [Symbol.toPrimitive](hint: "string"): string },
+    broadCastMode = "BROADCAST_MODE_SYNC"
+  ) {
+    const txBytesBase64 = Buffer.from(signedTxBytes, "binary").toString(
+      "base64"
+    );
 
     var options = {
       method: "POST",
@@ -204,31 +221,32 @@ export class Cosmolib {
 
     try {
       let response = await fetch(this.url + "/cosmos/tx/v1beta1/txs", options);
-      return await response.json()
+      return await response.json();
     } catch (e) {
       console.log(e);
     }
   }
 
   assertTransaction(transactionResult: any) {
+    // console.log("[tx] ", transactionResult);
+
     const transactionInfo = {
       status: false,
-      code: '',
-      log: ''
-    }
+      code: 0,
+      log: "",
+    };
     if (!transactionResult) {
       return transactionInfo;
     }
 
     transactionInfo.code = transactionResult.tx_response.code;
 
-    if (transactionInfo.code === '0') {
-      transactionInfo.status = true
+    if (transactionInfo.code === 0) {
+      transactionInfo.status = true;
+    } else {
+      transactionInfo.log = transactionResult.tx_response.raw_log;
     }
-    else {
-      transactionInfo.log = transactionResult.tx_response.raw_log
-    }
-    
+
     return transactionInfo;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
-import { newAuth } from "../utils/auth";
+import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
+import { saveWalletToStore } from "../utils/auth";
 import AuthContext from "../hooks/authContext";
 import { isValidMnemonic, getAddressReex } from "../utils/address"
 
@@ -10,18 +10,24 @@ const UselessTextInput = (props: any) => {
 
 export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
   const [mnemonic, onChangeMnemonic] = React.useState("");
-  const { setWallet, setAddress } = useContext(AuthContext);
+  const { setWallet, setLoading, loading } = useContext(AuthContext);
 
   const onImport = async () => {
+    setLoading(true)
+    setTimeout(async () => {
     try {
       if (isValidMnemonic(mnemonic)) {
         const address = await getAddressReex(mnemonic);
-        newAuth(address, mnemonic);
-        setAddress(address);
-        setWallet(true);
+        saveWalletToStore(address, mnemonic);
+        setWallet(true)
+      } else {
+        Alert.alert("", "Введите правильную сид-фразу.");
       }
+      setLoading(false);
+    } catch (e) {
+      Alert.alert("Ошибка", e);
     }
-    catch (e) {}
+    }, 0)
   };
 
   return (

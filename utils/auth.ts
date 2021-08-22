@@ -11,8 +11,10 @@ export async function checkWallet() {
 }
 
 export function logout() {
-  setValue("app-reex-address", '');
-  setValue("app-reex-mnemonic", '');
+  setValue("app-reex-address", "");
+  setValue("app-reex-mnemonic", "");
+  setValue("app-reex-balance", "0");
+  console.log('deleted data')
 }
 
 export async function auth(password: string) {
@@ -20,17 +22,25 @@ export async function auth(password: string) {
   return password === result;
 }
 
-export async function newAuth(address: string, mnemonic: string) {
-  const resultAddress = await setValue("app-reex-address", address);
-  const resultMnemonic = await setValue("app-reex-mnemonic", mnemonic);
+export function saveWalletToStore(address: string, mnemonic: string) {
+  setValue("app-reex-address", address);
+  setValue("app-reex-mnemonic", mnemonic);
+  setValue("app-reex-balance", "0");
 }
 
-export async function getWallet() {
-  const address = await getValue("app-reex-address");
-  const mnemomic = await getValue("app-reex-mnemonic");
-  // setValue("app-reex-address", '')
-  // setValue("app-reex-mnemonic", '');
-  return { address, mnemomic };
+export function saveBalance(balance: string) {
+  setValue("app-reex-balance", balance);
+}
+
+export async function getBalanceFromStore() {
+  return await getValue("app-reex-balance");
+}
+
+export async function getWalletFromStore() {
+  const address = (await getValue("app-reex-address")) ?? "";
+  const mnemomic = (await getValue("app-reex-mnemonic")) ?? "";
+  const balance = (await getValue("app-reex-balance")) ?? "0";
+  return { address, mnemomic, balance };
 }
 
 async function setValue(key: string, value: string) {

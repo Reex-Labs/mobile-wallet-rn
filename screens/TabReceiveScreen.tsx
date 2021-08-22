@@ -1,13 +1,27 @@
 import * as React from "react";
 import QRCode from "react-native-qrcode-svg";
-import { StyleSheet, TextInput as RTextInput } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert, Clipboard } from "react-native";
 import AuthContext from "../hooks/authContext";
 
 import { Text, View } from "../components/Themed";
 
-export default function TabThreeScreen() {
+export default function TabReceiveScreen() {
   const { address } = React.useContext(AuthContext);
-  const isAddress = address ? true : false
+  const isAddress = address ? true : false;
+
+  const copyToClipboard = () => {
+    Clipboard.setString(address);
+    Alert.alert("Скопировано", "Ваш адрес скопирован.");
+  };
+
+  const AddressWithCopy = () => (
+    <TouchableOpacity onPress={() => copyToClipboard()}>
+      <Text style={styles.light}>Нажмите для копирования</Text>
+      <Text style={styles.addressText} selectable={true}>
+        {address}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -17,7 +31,7 @@ export default function TabThreeScreen() {
       </Text>
       <Text style={styles.title}>Ваш адрес кошелька REEX:</Text>
       {isAddress ? (
-        <Text style={styles.addressText}>{address}</Text>
+        <AddressWithCopy />
       ) : (
         <Text style={[styles.errorText, styles.addressText]}>
           Ошибка адреса
@@ -60,6 +74,10 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     backgroundColor: "#eee",
+  },
+  light: {
+    color: "#8bf",
+    textAlign: "center",
   },
   errorText: {
     color: "#900",
