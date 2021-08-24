@@ -67,10 +67,17 @@ export function Button(props: any) {
 
 export function TextInput(props: any) {
   const { style, value, placeholder, keyboardType, lightColor, darkColor } = props;
-  const backgroundColor = useThemeColor(
+  const color = useThemeColor(
     { light: lightColor, dark: darkColor },
-    "background"
+    "text"
   );
 
-  return <DefaultTextInput style={style} value={value} placeholder={placeholder} keyboardType={keyboardType} />;
+  return (
+    <DefaultTextInput
+      style={[color, style]}
+      value={value}
+      placeholder={placeholder}
+      keyboardType={keyboardType}
+    />
+  );
 }

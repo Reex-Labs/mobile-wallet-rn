@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
+import { StyleSheet, Alert, TextInput as ReactTextInput } from "react-native";
 import { saveWalletToStore } from "../utils/auth";
 import AuthContext from "../hooks/authContext";
 import { isValidMnemonic, getAddressReex } from "../utils/address"
+import { View, Text, Button } from "../components/Themed";
 
 const UselessTextInput = (props: any) => {
-  return <TextInput {...props} editable maxLength={200} />;
+  return <ReactTextInput {...props} editable maxLength={200} style={styles.input} />;
 };
 
 export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
@@ -59,7 +60,9 @@ export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
         />
       </View>
 
-      <Button title={"Импортировать"} onPress={onImport} />
+      <View style={{paddingTop: 10}}>
+        <Button title={"Импортировать"} onPress={onImport} />
+      </View>
     </View>
   );
 }
@@ -67,7 +70,6 @@ export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -89,4 +91,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlign: "center",
   },
+  input: {
+    backgroundColor: "#fff",
+    color: "#fff"
+  }
 });

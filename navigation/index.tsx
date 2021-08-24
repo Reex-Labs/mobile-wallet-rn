@@ -47,11 +47,6 @@ function RootNavigator() {
           {isAuth ? (
             <>
               <Stack.Screen name="Root" component={BottomTabNavigator} />
-              <Stack.Screen
-                name="NotFound"
-                component={NotFoundScreen}
-                options={{ title: "Oops!" }}
-              />
             </>
           ) : (
             <Stack.Screen name="Login" component={LoginScreen} />
@@ -64,6 +59,11 @@ function RootNavigator() {
           <Stack.Screen name="MnemonicInfo" component={MnemonicInfoScreen} />
         </>
       )}
+      <Stack.Screen
+        name="NotFound"
+        component={NotFoundScreen}
+        options={{ title: "Oops!" }}
+      />
     </Stack.Navigator>
   );
 }

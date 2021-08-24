@@ -1,16 +1,16 @@
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
 
 import Colors from "../constants/Colors";
 import { MonoText } from "./StyledText";
-import { Text, View, ScrollView } from "./Themed";
+import { Text, View } from "./Themed";
 import HistoryItem from "./HistoryItem";
 
 import historyList from "../mocks/hystoryMock";
 
-export default function HistoryTransactions({ style }: { style: any }) {
+export default function HistoryTransactions() {
   const renderItem = ({ item }: { item: any }) => (
     <HistoryItem
       id={item.id}
@@ -21,12 +21,12 @@ export default function HistoryTransactions({ style }: { style: any }) {
   );
 
   return (
-    <View style={style}>
-      <View style={styles.historyTitleContainer}>
+    <View style={styles.history}>
+      <View style={styles.historyTitleContainer} lightColor="#f2f2f2" darkColor="#222">
         <Text
           style={styles.historyTitle}
           lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)"
+          darkColor="#aaa"
         >
           История
         </Text>
@@ -49,9 +49,11 @@ function handleItemPress() {
 }
 
 const styles = StyleSheet.create({
+  history: {
+    flex: 1
+  },
   historyTitleContainer: {
     alignItems: "center",
-    backgroundColor: "#f2f2f2",
   },
   historyTitle: {
     fontSize: 17,

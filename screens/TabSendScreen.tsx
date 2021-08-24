@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, TextInput as RTextInput } from "react-native";
+import { StyleSheet } from "react-native";
 import AuthContext from "../hooks/authContext";
 
-import { Text, View, Button } from "../components/Themed";
+import { Text, View, Button, TextInput } from "../components/Themed";
 import { isValidAddress } from "../utils/address";
 import cosmolib from "../utils/cosmolib";
 import { reexToCoin } from "../utils/reex";
@@ -77,19 +77,15 @@ export default function TabSendScreen() {
       <View style={styles.orText}>
         <Text>или</Text>
       </View>
-      <View
-        style={styles.inputGroup}
-        lightColor="#fff"
-        darkColor="rgba(255,255,255,0.1)"
-      >
-        <RTextInput
+      <View style={styles.inputGroup} lightColor="#fff" darkColor="#fff">
+        <TextInput
           style={styles.input}
           value={to}
           placeholder={"Введите адрес кошелька"}
           keyboardType={"default"}
           onChangeText={setAddress}
         />
-        <RTextInput
+        <TextInput
           style={styles.input}
           value={amount}
           placeholder={"Введите сумму REEX"}
