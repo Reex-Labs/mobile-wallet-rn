@@ -1,16 +1,14 @@
 import * as React from "react";
 import {
   StyleSheet,
-  Text,
-  View,
-  Button,
   TouchableOpacity,
   Clipboard,
   Alert,
 } from "react-native";
+import { View, Text, Button } from "../components/Themed";
 import AuthContext from "../hooks/authContext";
 
-export default function MnemonicInfoScreen({ route }: { route: any }) {
+export default function MnemonicInfoScreen({ navigation, route }: { navigation: any, route: any }) {
   const { setWallet } = React.useContext(AuthContext);
   const { mnemonic } = route.params;
 
@@ -58,7 +56,6 @@ const ForwardButton = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -70,7 +67,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   warning: {
-    color: "#990000",
+    color: "#c44",
     marginVertical: 20,
     textAlign: "center",
   },

@@ -55,7 +55,7 @@ export default function TabWalletScreen({ navigation }: { navigation: any }) {
         </View>
       </View>
 
-      <HistoryTransactions style={styles.history} />
+      <HistoryTransactions />
     </View>
   );
 }
@@ -69,9 +69,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: "#0063c0",
     paddingTop: 40,
-  },
-  history: {
-    flex: 1,
   },
   title: {
     textAlign: "center",

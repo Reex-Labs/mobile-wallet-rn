@@ -1,19 +1,19 @@
 import * as React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Button } from "react-native";
 import { genAddressReex } from "../utils/address";
 import AuthContext from "../hooks/authContext";
 import { saveWalletToStore } from "../utils/auth";
+import { View, Text } from "../components/Themed";
 
 export default function WelcomeScreen({ navigation }: { navigation: any }) {
-  const { setWallet, setLoading, loading } = React.useContext(AuthContext);
+  const { setLoading, loading } = React.useContext(AuthContext);
 
   async function createWallet() {
     setLoading(true);
     setTimeout(async () => {
       const { address, mnemonic } = await genAddressReex();
       saveWalletToStore(address, mnemonic);
-      setWallet(true)
-      navigation.navigate("MnemonicInfo", { mnemonic });
+      navigation.navigate("MnemonicInfo", { mnemonic: mnemonic });
       setLoading(false);
     }, 0);
   }
@@ -28,6 +28,7 @@ export default function WelcomeScreen({ navigation }: { navigation: any }) {
       <CreateWalletMain
         onCreateButton={createWallet}
         onImportButton={onImportButton}
+        navigation={navigation}
         loading={loading}
       />
     </View>
@@ -37,14 +38,16 @@ export default function WelcomeScreen({ navigation }: { navigation: any }) {
 function CreateWalletMain({
   onCreateButton,
   onImportButton,
+  navigation,
   loading,
 }: {
   onCreateButton: () => void;
   onImportButton: () => void;
+    navigation: any;
   loading: boolean;
 }) {
   return (
-    <>
+    <View style={styles.block}>
       <View style={styles.block}>
         <Text style={styles.text}>
           Если у вас еще нет кошелька REEX, то создайте его!
@@ -53,7 +56,7 @@ function CreateWalletMain({
           <Button
             title={"Создать кошелек"}
             onPress={onCreateButton}
-            disabled={loading}
+            // disabled={loading}
           />
         </View>
       </View>
@@ -65,18 +68,17 @@ function CreateWalletMain({
           <Button
             title={"Импорт"}
             onPress={onImportButton}
-            disabled={loading}
+            // disabled={loading}
           />
         </View>
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,

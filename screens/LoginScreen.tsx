@@ -1,13 +1,18 @@
 import * as React from "react";
-import { StyleSheet, Text, View, Button, Platform } from "react-native";
+import { StyleSheet } from "react-native";
+import { View, Text, Button } from "../components/Themed";
 import AuthContext from "../hooks/authContext";
 import { useContext } from "react";
 
 export default function LoginScreen() {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth, setLoading } = useContext(AuthContext);
 
   const login = () => {
-    setAuth(true);
+    setLoading(true);
+    setTimeout(() => {
+      setAuth(true);
+      setLoading(false);
+    }, 0);
   };
 
   return (
@@ -21,7 +26,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -29,6 +33,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 50
+    marginBottom: 50,
   },
 });

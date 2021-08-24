@@ -24,7 +24,7 @@ export default function TabReceiveScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
       <Text style={styles.info}>
         Для перевода REEX на ваш кошелек вы должны сообщить отправителю свой
         адрес кошелька.
@@ -45,7 +45,7 @@ export default function TabReceiveScreen() {
       </Text>
 
       {isAddress && (
-        <View lightColor="#eee" darkColor="rgba(255,255,255,0.1)">
+        <View lightColor="#555" darkColor="#eee">
           <QRCode value={address ?? "error"} size={250} />
         </View>
       )}
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   info: {
     margin: 10,
     padding: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "transparent",
   },
   light: {
     color: "#8bf",
