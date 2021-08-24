@@ -1,34 +1,34 @@
 import React, { useContext } from "react";
-import { StyleSheet, Alert, TextInput as ReactTextInput } from "react-native";
-import { saveWalletToStore } from "../utils/auth";
+import { StyleSheet, Alert } from "react-native";
+import { Auth } from "../utils/store";
 import AuthContext from "../hooks/authContext";
-import { isValidMnemonic, getAddressReex } from "../utils/address"
-import { View, Text, Button } from "../components/Themed";
+import { isValidMnemonic, getAddressReex } from "../utils/address";
+import { View, Text, Button, TextInput } from "../components/Themed";
 
-const UselessTextInput = (props: any) => {
-  return <ReactTextInput {...props} editable maxLength={200} style={styles.input} />;
-};
-
-export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
+export default function ImportWalletScreen({
+  navigation,
+}: {
+  navigation: any;
+}) {
   const [mnemonic, onChangeMnemonic] = React.useState("");
   const { setWallet, setLoading, loading } = useContext(AuthContext);
 
   const onImport = async () => {
-    setLoading(true)
+    setLoading(true);
     setTimeout(async () => {
-    try {
-      if (isValidMnemonic(mnemonic)) {
-        const address = await getAddressReex(mnemonic);
-        saveWalletToStore(address, mnemonic);
-        setWallet(true)
-      } else {
-        Alert.alert("", "Введите правильную сид-фразу.");
+      try {
+        if (isValidMnemonic(mnemonic)) {
+          const address = await getAddressReex(mnemonic);
+          Auth.saveWalletToStore(address, mnemonic);
+          setWallet(true);
+        } else {
+          Alert.alert("", "Введите правильную сид-фразу.");
+        }
+        setLoading(false);
+      } catch (e) {
+        Alert.alert("Ошибка", e);
       }
-      setLoading(false);
-    } catch (e) {
-      Alert.alert("Ошибка", e);
-    }
-    }, 0)
+    }, 0);
   };
 
   return (
@@ -51,16 +51,18 @@ export default function ImportWalletScreen({navigation,}: {navigation: any;}) {
       </Text>
 
       <View style={{ width: "80%" }}>
-        <UselessTextInput
+        <TextInput
           multiline={true}
           numberOfLines={6}
           onChangeText={(text: any) => onChangeMnemonic(text)}
           value={mnemonic}
-          style={{ padding: 10, marginBottom: 20, borderWidth: 1 }}
+          style={styles.input}
+          maxLength={200}
+          darkColor="#fff"
         />
       </View>
 
-      <View style={{paddingTop: 10}}>
+      <View style={{ paddingTop: 10 }}>
         <Button title={"Импортировать"} onPress={onImport} />
       </View>
     </View>
@@ -92,7 +94,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
-    backgroundColor: "#fff",
-    color: "#fff"
-  }
+    padding: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    // backgroundColor: "#fff",
+    // color: "#fff",
+  },
 });

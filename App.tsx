@@ -10,7 +10,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 
-import { getWalletFromStore, saveBalance } from "./utils/auth";
+import { Auth } from "./utils/store";
 import { useBalanceFetching } from "./hooks/useBalanceFetching";
 import { useSavedBalance } from "./hooks/useSavedBalance";
 
@@ -27,7 +27,7 @@ export default function App() {
   const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
-    saveBalance(balance);
+    Auth.saveBalanceToStore(balance);
   }, [balance])
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function App() {
     //   setBalance(balance);
     // });
 
-    getWalletFromStore().then((wallet) => {
+    Auth.getWalletFromStore().then((wallet) => {
       if (wallet.address) {
         setWallet(true);
       }
@@ -48,7 +48,7 @@ export default function App() {
           setBalance(newBalance);
         }
         setBalanceLoaded(true);
-      })
+      });
     });
   }, [isWallet]);
 

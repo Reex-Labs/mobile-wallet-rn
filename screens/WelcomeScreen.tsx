@@ -2,17 +2,17 @@ import * as React from "react";
 import { StyleSheet, Button } from "react-native";
 import { genAddressReex } from "../utils/address";
 import AuthContext from "../hooks/authContext";
-import { saveWalletToStore } from "../utils/auth";
+import { Auth } from "../utils/store";
 import { View, Text } from "../components/Themed";
 
 export default function WelcomeScreen({ navigation }: { navigation: any }) {
-  const { setLoading, loading } = React.useContext(AuthContext);
+  const { setWallet, setLoading, loading } = React.useContext(AuthContext);
 
   async function createWallet() {
     setLoading(true);
     setTimeout(async () => {
       const { address, mnemonic } = await genAddressReex();
-      saveWalletToStore(address, mnemonic);
+      Auth.saveWalletToStore(address, mnemonic);
       navigation.navigate("MnemonicInfo", { mnemonic: mnemonic });
       setLoading(false);
     }, 0);

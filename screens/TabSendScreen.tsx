@@ -5,11 +5,23 @@ import AuthContext from "../hooks/authContext";
 import { Text, View, Button, TextInput } from "../components/Themed";
 import { isValidAddress } from "../utils/address";
 import cosmolib from "../utils/cosmolib";
-import { reexToCoin } from "../utils/reex";
+import { isValidAmount, reexToCoin } from "../utils/reex";
 import { Alert } from "react-native";
 
 import QrCodeScaner from "../components/QrCodeScaner";
 import { BarCodeScannerResult } from "expo-barcode-scanner";
+import { TxsHistory } from "../utils/store";
+
+function saveTx(from: string, to: string, amount: string) {
+  TxsHistory.set({
+    type: "Send",
+    date: Date.now(),
+    from: from,
+    to: to,
+    amount: amount,
+    state: true,
+  });
+}
 
 export default function TabSendScreen() {
   const [to, setAddress] = React.useState("");
@@ -41,6 +53,16 @@ export default function TabSendScreen() {
 
   async function transfer() {
     setLoading(true);
+    if (!isValidAddress(to)) {
+      Alert.alert("Небольшая ошибка", "Похоже вы ввели неправильный адрес");
+      setLoading(false);
+      return;
+    }
+    if (!isValidAmount(amount)) {
+      Alert.alert("Небольшая ошибка", "Похоже вы ввели неправильную сумму \nСумма должна быть не меньше 0.00001.");
+      setLoading(false);
+      return;
+    }
     const result = await cosmolib.sendToken(
       address,
       to,
@@ -51,13 +73,14 @@ export default function TabSendScreen() {
     if (result) {
       if (result.status) {
         Alert.alert("Перевод выполнен!", `${amount} REEX на адрес ${to}`);
+        saveTx(address, to, amount);
       } else {
         Alert.alert("Ошибка", result.log);
       }
     } else {
       Alert.alert(
         "Ошибка",
-        "Неизвестная ошибка. Возможно проблемы с интернетом."
+        "Неизвестная ошибка перевода. Возможно, проблемы с интернетом, или что-то не так с адресом получателя."
       );
     }
   }
@@ -77,13 +100,14 @@ export default function TabSendScreen() {
       <View style={styles.orText}>
         <Text>или</Text>
       </View>
-      <View style={styles.inputGroup} lightColor="#fff" darkColor="#fff">
+      <View style={styles.inputGroup}>
         <TextInput
           style={styles.input}
           value={to}
           placeholder={"Введите адрес кошелька"}
           keyboardType={"default"}
           onChangeText={setAddress}
+          darkColor="#fff"
         />
         <TextInput
           style={styles.input}
@@ -91,6 +115,7 @@ export default function TabSendScreen() {
           placeholder={"Введите сумму REEX"}
           keyboardType={"numeric"}
           onChangeText={setAmount}
+          darkColor="#fff"
         />
         <Button
           title={"ПЕРЕВЕСТИ"}

@@ -3,7 +3,7 @@ import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 
 import HistoryTransactions from '../components/HistoryTransactions';
 import { Text, View, Button } from '../components/Themed';
-import { logout } from '../utils/auth';
+import { Auth } from "../utils/store/";
 import AuthContext from '../hooks/authContext';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -28,7 +28,7 @@ export default function TabWalletScreen({ navigation }: { navigation: any }) {
   };
 
   const onHeaderButtor = () => {
-    logout();
+    Auth.logout();
     setAuth(false);
     setWallet(false);
   };
@@ -55,7 +55,7 @@ export default function TabWalletScreen({ navigation }: { navigation: any }) {
         </View>
       </View>
 
-      <HistoryTransactions />
+      {/* <HistoryTransactions style={styles.history} /> */}
     </View>
   );
 }
@@ -65,14 +65,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   balance: {
-    height: 220,
+    flex: 1,
+    // justifyContent: 'center',
+    // height: 220,
     textAlign: "center",
     backgroundColor: "#0063c0",
-    paddingTop: 40,
+    // backgroundColor: "#004F99",
+    paddingTop: "30%",
   },
   title: {
     textAlign: "center",
-    fontSize: 36,
+    fontSize: 60,
     fontWeight: "bold",
     color: "white",
   },
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 14,
+    marginTop: 34,
     backgroundColor: "transparent",
   },
   button: {},

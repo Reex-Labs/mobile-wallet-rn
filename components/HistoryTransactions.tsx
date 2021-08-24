@@ -3,14 +3,25 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
 
-import Colors from "../constants/Colors";
-import { MonoText } from "./StyledText";
-import { Text, View } from "./Themed";
+import { Text, View, ScrollView } from "./Themed";
 import HistoryItem from "./HistoryItem";
 
 import historyList from "../mocks/hystoryMock";
+import { TxsHistory, TxHistoryItem } from "../utils/store/";
+import AuthContext from "../hooks/authContext";
 
-export default function HistoryTransactions() {
+export default function HistoryTransactions({ style }: { style: any }) {
+  const { address } = React.useContext(AuthContext)
+  const [txs, setTxs] = React.useState<TxHistoryItem[]>();
+  
+  React.useEffect(() => {
+    TxsHistory.getLast(20, address).then((result) => {
+      if (result) {
+        setTxs(result);
+      }
+    });
+  }, [])
+
   const renderItem = ({ item }: { item: any }) => (
     <HistoryItem
       id={item.id}
@@ -32,8 +43,10 @@ export default function HistoryTransactions() {
         </Text>
       </View>
 
+      <View></View>
+
       <FlatList
-        data={historyList}
+        data={txs}
         renderItem={renderItem}
         keyExtractor={(item: any) => item.id.toString()}
         style={styles.historyList}

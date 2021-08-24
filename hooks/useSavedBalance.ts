@@ -1,7 +1,7 @@
-import { getBalanceFromStore } from "../utils/auth"
+import { Auth } from "../utils/store/"
 
 export async function useSavedBalance() {
-    const balance = await getBalanceFromStore()
+    const balance = await Auth.getBalanceFromStore();
     if (balance) {
         return balance
     }

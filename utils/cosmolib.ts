@@ -183,6 +183,7 @@ export class Cosmolib {
 
   async sendToken(from: string, to: string, amount: string, mnemonic: string) {
     let accountNumber = "0";
+    try {
     const data = await this.getAccounts(from);
     if (data && data.account.account_number) {
       accountNumber = data.account.account_number;
@@ -199,6 +200,10 @@ export class Cosmolib {
 
     const responce = await this.broadcast(signedTx, "BROADCAST_MODE_BLOCK");
     return this.assertTransaction(responce);
+    }
+    catch (e) {
+      return
+    }
   }
 
   // "BROADCAST_MODE_UNSPECIFIED", "BROADCAST_MODE_BLOCK", "BROADCAST_MODE_SYNC", "BROADCAST_MODE_ASYNC"
@@ -228,8 +233,6 @@ export class Cosmolib {
   }
 
   assertTransaction(transactionResult: any) {
-    // console.log("[tx] ", transactionResult);
-
     const transactionInfo = {
       status: false,
       code: 0,

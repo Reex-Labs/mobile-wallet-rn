@@ -12,7 +12,13 @@ export default function HistoryItem({
   date: any;
   type: any;
   amount: any;
-}) {
+  }) {
+  const dateObj = new Date(date);
+  const day = ("0" + dateObj.getDate()).substr(-2);
+  const month = ("0" + (dateObj.getMonth() + 1)).substr(-2);
+  const year = dateObj.getFullYear();
+  const formatedDate = `${day}.${month}.${year}`;
+  
   return (
     <View style={styles.historyItem}>
       <Text
@@ -20,7 +26,7 @@ export default function HistoryItem({
         lightColor="rgba(0,0,0,0.8)"
         darkColor="rgba(255,255,255,0.8)"
       >
-        {date}
+        {formatedDate}
       </Text>
       <Text
         style={styles.historyTypeText}
@@ -47,7 +53,7 @@ const styles = StyleSheet.create({
   },
   historyDateText: {
       paddingHorizontal: 5,
-      width: 80,
+      width: 100,
   },
   historyTypeText: {
     flex: 1,
