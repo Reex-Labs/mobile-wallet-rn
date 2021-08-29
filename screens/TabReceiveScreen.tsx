@@ -53,7 +53,7 @@ export default function TabReceiveScreen() {
           </Text>
 
           {isAddress && (
-            <View lightColor="#555" darkColor="#eee">
+            <View style={ styles.qrcode } lightColor="#555" darkColor="#eee">
               <QRCode value={address ?? "error"} size={250} />
             </View>
           )}
@@ -92,4 +92,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "#900",
   },
+  qrcode: {
+    marginBottom: 20,
+  }
 });

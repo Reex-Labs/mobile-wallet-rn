@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "reex",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/reex-icon.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,14 +19,17 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.reexlabs.reexwallet",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.reexlabs.reexwallet"
+      "package": "com.reexlabs.reexwallet",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
