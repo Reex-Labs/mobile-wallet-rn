@@ -1,6 +1,12 @@
 import * as React from "react";
 import QRCode from "react-native-qrcode-svg";
-import { StyleSheet, TouchableOpacity, Alert, Clipboard } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Clipboard,
+  ScrollView,
+} from "react-native";
 import AuthContext from "../hooks/authContext";
 
 import { Text, View } from "../components/Themed";
@@ -24,31 +30,35 @@ export default function TabReceiveScreen() {
   );
 
   return (
-    <View style={styles.container} >
-      <Text style={styles.info}>
-        Для перевода REEX на ваш кошелек вы должны сообщить отправителю свой
-        адрес кошелька.
-      </Text>
-      <Text style={styles.title}>Ваш адрес кошелька REEX:</Text>
-      {isAddress ? (
-        <AddressWithCopy />
-      ) : (
-        <Text style={[styles.errorText, styles.addressText]}>
-          Ошибка адреса
-        </Text>
-      )}
+    <View style={styles.container}>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.info}>
+            Для перевода REEX на ваш кошелек вы должны сообщить отправителю свой
+            адрес кошелька.
+          </Text>
+          <Text style={styles.title}>Ваш адрес кошелька REEX:</Text>
+          {isAddress ? (
+            <AddressWithCopy />
+          ) : (
+            <Text style={[styles.errorText, styles.addressText]}>
+              Ошибка адреса
+            </Text>
+          )}
 
-      <Text style={styles.info}>
-        Так же вы можете показать отправителю QR-код вашего кошелька, он
-        отсканирует его приложением Reex Wallet, и автоматически получит адрес
-        вашего кошелька.
-      </Text>
+          <Text style={styles.info}>
+            Так же вы можете показать отправителю QR-код вашего кошелька, он
+            отсканирует его приложением Reex Wallet, и автоматически получит
+            адрес вашего кошелька.
+          </Text>
 
-      {isAddress && (
-        <View lightColor="#555" darkColor="#eee">
-          <QRCode value={address ?? "error"} size={250} />
+          {isAddress && (
+            <View lightColor="#555" darkColor="#eee">
+              <QRCode value={address ?? "error"} size={250} />
+            </View>
+          )}
         </View>
-      )}
+      </ScrollView>
     </View>
   );
 }

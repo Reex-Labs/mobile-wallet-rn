@@ -1,16 +1,8 @@
-/*
-    Developed / Developing by Cosmostation
-    [WARNING] CosmosJS is under ACTIVE DEVELOPMENT and should be treated as alpha version. We will remove this warning when we have a release that is stable, secure, and propoerly tested.
-*/
-// import fetch from "node-fetch";
-// import request from "request";
 import * as bip32 from "bip32";
 import * as bip39 from "bip39";
 import { bech32 } from "bech32";
-// import * as secp256k1 from "secp256k1";
 const secp256k1 = require("secp256k1");
 import { createHash } from "crypto-browserify";
-// import bitcoinjs from "bitcoinjs-lib";
 import * as message from "../proto/proto";
 import seed from "./seed";
 
@@ -65,7 +57,7 @@ export class Cosmolib {
     const seed = await bip39.mnemonicToSeed(mnemonic);
     const node = bip32.fromSeed(seed);
     const child = node.derivePath(this.path);
-    return child.privateKey;
+    return child.privateKey as Buffer;
   }
 
   getPubKey(privKey: string) {
@@ -73,7 +65,7 @@ export class Cosmolib {
     return pubKeyByte;
   }
 
-  getPubKeyAny(privKey: string) {
+  getPubKeyAny(privKey: Buffer) {
     const pubKeyByte = secp256k1.publicKeyCreate(privKey);
     var buf1 = Buffer.from([10]);
     var buf2 = Buffer.from([pubKeyByte.length]);
@@ -95,12 +87,19 @@ export class Cosmolib {
 
   async getBalance(address: string) {
     let balancesApi = "/cosmos/bank/v1beta1/balances/";
-    const response = await fetch(this.url + balancesApi + address);
+    try {
+      const response = await fetch(this.url + balancesApi + address);
     if (response.status === 200) {
       return await response.json();
     } else {
       return null;
     }
+    }
+    catch (e) {
+      console.log('[balance]', e)
+      return null
+    }
+
   }
 
   getTxBody(from: string, to: string, amount: string) {
@@ -125,7 +124,7 @@ export class Cosmolib {
 
   async getAuthInfo(amount: string, pubKeyAny: string, data: any) {
     let sequence = "0";
-    if (data && data.account.sequence) {
+    if (data && data?.account?.sequence) {
       sequence = data.account.sequence;
     }
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
@@ -155,9 +154,7 @@ export class Cosmolib {
     txBody: any,
     authInfo: any,
     accountNumber: any,
-    privKey:
-      | ArrayBuffer
-      | { valueOf(): ArrayBuffer | SharedArrayBuffer }
+    privKey: ArrayBuffer | { valueOf(): ArrayBuffer | SharedArrayBuffer }
   ) {
     const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
     const authInfoBytes =
@@ -182,28 +179,32 @@ export class Cosmolib {
   }
 
   async sendToken(from: string, to: string, amount: string, mnemonic: string) {
+    console.log('[tx] Send token')
     let accountNumber = "0";
+    let data;
+
     try {
-    const data = await this.getAccounts(from);
-    if (data && data.account.account_number) {
+      data = await this.getAccounts(from);
+    } catch {
+      return null
+    }
+
+    if (data && data?.account?.account_number) {
       accountNumber = data.account.account_number;
     }
-    if (data && data.code === 5) {
+
+    if (data && data?.code == 5) {
       console.log("[tx] account key not found");
-      accountNumber = data.account.account_number;
     }
+
     const privKey = await this.getECPairPriv(mnemonic);
     const pubKeyAny = this.getPubKeyAny(privKey);
     const txBody = this.getTxBody(from, to, amount);
     const authInfo = await this.getAuthInfo(amount, pubKeyAny, data);
     const signedTx = this.sign(txBody, authInfo, accountNumber, privKey);
-
     const responce = await this.broadcast(signedTx, "BROADCAST_MODE_BLOCK");
+
     return this.assertTransaction(responce);
-    }
-    catch (e) {
-      return
-    }
   }
 
   // "BROADCAST_MODE_UNSPECIFIED", "BROADCAST_MODE_BLOCK", "BROADCAST_MODE_SYNC", "BROADCAST_MODE_ASYNC"

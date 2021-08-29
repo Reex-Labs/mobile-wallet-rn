@@ -3,10 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
 export async function setValueSecure(key: string, value: string) {
-  if (Platform.OS === "web") {
-    await AsyncStorage.setItem(key, value);
-  } else {
-    await SecureStore.setItemAsync(key, value);
+  try {
+    if (Platform.OS === "web") {
+      await AsyncStorage.setItem(key, value);
+    } else {
+      await SecureStore.setItemAsync(key, value);
+    }
+  } catch (e) {
+    throw e;
   }
 }
 

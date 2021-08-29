@@ -70,7 +70,6 @@ export function TextInput(props: any) {
     style,
     value,
     placeholder,
-    keyboardType,
     lightColor,
     darkColor,
     ...otherProps

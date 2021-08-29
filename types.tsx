@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Login: undefined;
   Import: undefined;
   MnemonicInfo: undefined;
+  Settings: undefined;
 };
 
 export type BottomTabParamList = {

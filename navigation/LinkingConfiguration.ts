@@ -14,6 +14,7 @@ export default {
       Login: "Login",
       Import: "Import",
       MnemonicInfo: "MnemonicInfo",
+      Settings: "Settings",
       Root: {
         screens: {
           Wallet: {

@@ -10,7 +10,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 
-import { Auth } from "./utils/store";
+import { Wallet } from "./utils/store";
 import { useBalanceFetching } from "./hooks/useBalanceFetching";
 import { useSavedBalance } from "./hooks/useSavedBalance";
 
@@ -27,30 +27,31 @@ export default function App() {
   const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
-    Auth.saveBalanceToStore(balance);
-  }, [balance])
-
-  useEffect(() => {
-    // useSavedBalance().then((balance) => {
-    //   setBalance(balance);
-    // });
-
-    Auth.getWalletFromStore().then((wallet) => {
-      if (wallet.address) {
+    Wallet.getActive().then((wallet) => {
+      if (wallet?.address) {
         setWallet(true);
+        setAddress(wallet.address);
+        setMnemonic(wallet.mnemonic);
+        setBalance(wallet.balance);
+      } else {
+        setWallet(false);
       }
-      setAddress(wallet.address);
-      setMnemonic(wallet.mnemomic);
-      setBalance(wallet.balance);
-
-      useBalanceFetching(wallet.address, (newBalance) => {
-        if (newBalance !== balance) {
-          setBalance(newBalance);
-        }
-        setBalanceLoaded(true);
-      });
     });
   }, [isWallet]);
+
+  useEffect(() => {
+    useBalanceFetching(address, (newBalance) => {
+      setBalanceLoaded(false);
+      if (newBalance && newBalance !== balance) {
+        setBalance(newBalance);
+      }
+      setBalanceLoaded(true);
+    });
+  }, [address]);
+
+  useEffect(() => {
+    Wallet.saveBalance(balance);
+  }, [balance])
 
   if (!isLoadingComplete) {
     return null;

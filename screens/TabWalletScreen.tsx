@@ -28,9 +28,7 @@ export default function TabWalletScreen({ navigation }: { navigation: any }) {
   };
 
   const onHeaderButtor = () => {
-    Auth.logout();
-    setAuth(false);
-    setWallet(false);
+    navigation.navigate("Settings")
   };
 
   return (

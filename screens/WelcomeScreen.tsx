@@ -1,30 +1,51 @@
 import * as React from "react";
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet, Button, TouchableOpacity } from "react-native";
 import { genAddressReex } from "../utils/address";
 import AuthContext from "../hooks/authContext";
-import { Auth } from "../utils/store";
+import { Wallet } from "../utils/store";
 import { View, Text } from "../components/Themed";
 
 export default function WelcomeScreen({ navigation }: { navigation: any }) {
   const { setWallet, setLoading, loading } = React.useContext(AuthContext);
+  const [ emptyWalletList, setEmptyWalletList ] = React.useState(true);
 
   async function createWallet() {
     setLoading(true);
     setTimeout(async () => {
       const { address, mnemonic } = await genAddressReex();
-      Auth.saveWalletToStore(address, mnemonic);
+      await Wallet.add(address, mnemonic);
       navigation.navigate("MnemonicInfo", { mnemonic: mnemonic });
       setLoading(false);
     }, 0);
   }
 
+  React.useEffect(() => {
+    Wallet.all().then((walletList) => {
+      if (walletList.length) {
+        setEmptyWalletList(false);
+      }
+    });
+  }, []);
+
   const onImportButton = () => {
     navigation.navigate("Import");
   };
 
+  const onBackToWallet = () => {
+    Wallet.setActive(0)
+    setWallet(true)    
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Добро пожаловать в REEX</Text>
+      {!emptyWalletList && (
+        <TouchableOpacity onPress={onBackToWallet}>
+          <Text style={styles.back} lightColor="#09f">
+            Вернуться к кошельку
+          </Text>
+        </TouchableOpacity>
+      )}
       <CreateWalletMain
         onCreateButton={createWallet}
         onImportButton={onImportButton}
@@ -43,7 +64,7 @@ function CreateWalletMain({
 }: {
   onCreateButton: () => void;
   onImportButton: () => void;
-    navigation: any;
+  navigation: any;
   loading: boolean;
 }) {
   return (
@@ -98,6 +119,10 @@ const styles = StyleSheet.create({
     color: "#990000",
     marginVertical: 20,
     textAlign: "center",
+  },
+  back: {
+    // fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   border: {
     padding: 10,

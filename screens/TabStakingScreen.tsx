@@ -5,7 +5,14 @@ import { Text, View } from "../components/Themed";
 export default function TabStakingScreen() {
   return (
     <View style={styles.container}>
-      <Text>СКОРО</Text>
+      <Text style={styles.text}>Стейкинг будет доступен позже.</Text>
+      <Text style={styles.text}>
+        Стейкинг - это делегирование своих REEX валидатору.
+      </Text>
+      <Text style={styles.text}>
+        Валидатор - майнер, ответственный за хранение всей истории REEX и
+        подтверждения её актуальности.
+      </Text>
     </View>
   );
 }
@@ -16,4 +23,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  text: {
+    textAlign: "center"
+  }
 });

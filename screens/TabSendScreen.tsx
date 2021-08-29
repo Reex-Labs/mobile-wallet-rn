@@ -54,12 +54,15 @@ export default function TabSendScreen() {
   async function transfer() {
     setLoading(true);
     if (!isValidAddress(to)) {
-      Alert.alert("Небольшая ошибка", "Похоже вы ввели неправильный адрес");
+      Alert.alert("Небольшая ошибка", "Похоже вы неправильно ввели адрес");
       setLoading(false);
       return;
     }
     if (!isValidAmount(amount)) {
-      Alert.alert("Небольшая ошибка", "Похоже вы ввели неправильную сумму \nСумма должна быть не меньше 0.00001.");
+      Alert.alert(
+        "Небольшая ошибка",
+        "Похоже вы неправильно ввели сумму \nСумма должна быть не меньше 0.00001."
+      );
       setLoading(false);
       return;
     }
@@ -69,13 +72,18 @@ export default function TabSendScreen() {
       reexToCoin(amount).amount,
       mnemonic
     );
+    console.log('[tx] Result:', result);
     setLoading(false);
     if (result) {
       if (result.status) {
         Alert.alert("Перевод выполнен!", `${amount} REEX на адрес ${to}`);
         saveTx(address, to, amount);
       } else {
-        Alert.alert("Ошибка", result.log);
+        if (result.code === 9) {
+          Alert.alert("Ошибка", "Недостаточно средств.");
+        } else {
+          Alert.alert("Ошибка", result.log);
+        }
       }
     } else {
       Alert.alert(

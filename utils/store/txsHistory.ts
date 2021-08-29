@@ -1,4 +1,4 @@
-import * as Store from "./store";
+import * as Store from "./unsecureStore";
 
 export interface TxHistoryItem {
   id?: number;

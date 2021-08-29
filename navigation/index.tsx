@@ -15,6 +15,7 @@ import LoginScreen from "../screens/LoginScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ImportWalletScreen from "../screens/ImportWalletScreen";
 import MnemonicInfoScreen from "../screens/MnemonicInfoScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 import AuthContext from "../hooks/authContext";
 
@@ -47,6 +48,11 @@ function RootNavigator() {
           {isAuth ? (
             <>
               <Stack.Screen name="Root" component={BottomTabNavigator} />
+              <Stack.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{ headerShown: true }}
+              />
             </>
           ) : (
             <Stack.Screen name="Login" component={LoginScreen} />

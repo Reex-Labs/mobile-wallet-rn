@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, Alert } from "react-native";
-import { Auth } from "../utils/store";
+import { Wallet } from "../utils/store";
 import AuthContext from "../hooks/authContext";
 import { isValidMnemonic, getAddressReex } from "../utils/address";
 import { View, Text, Button, TextInput } from "../components/Themed";
@@ -19,7 +19,7 @@ export default function ImportWalletScreen({
       try {
         if (isValidMnemonic(mnemonic)) {
           const address = await getAddressReex(mnemonic);
-          Auth.saveWalletToStore(address, mnemonic);
+          await Wallet.add(address, mnemonic);
           setWallet(true);
         } else {
           Alert.alert("", "Введите правильную сид-фразу.");
